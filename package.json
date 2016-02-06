@@ -1,5 +1,5 @@
 {
-  "name": "up-asser",
+  "name": "up-your-ass-ets",
   "version": "1.0.0",
   "description": "node upload assets server",
   "main": "dist/index.js",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/goncalvesjoao/UpAsser.git"
+    "url": "git+https://github.com/goncalvesjoao/up-your-ass-ets.git"
   },
   "keywords": [
     "node",
@@ -23,9 +23,9 @@
   "author": "goncalvesjoao",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/goncalvesjoao/UpAsser/issues"
+    "url": "https://github.com/goncalvesjoao/up-your-ass-ets/issues"
   },
-  "homepage": "https://github.com/goncalvesjoao/UpAsser#readme",
+  "homepage": "https://github.com/goncalvesjoao/up-your-ass-ets#readme",
   "olddevDependencies": {
     "babel-cli": "6.4.5",
     "babel-preset-es2015": "6.3.13",

@@ -11,5 +11,5 @@ middleware(app, express);
 routes(app);
 
 app.listen(port, () => {
-  console.log(`UpAsser is kicking ass on port ${ port }`);
+  console.log(`Up and kicking ass on port ${ port }`);
 });
