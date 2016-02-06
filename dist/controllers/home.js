@@ -1,41 +1,30 @@
-const fs = require('fs');
-const path = require('path');
-const util = require('util');
-const formidable = require('formidable');
-const homeView = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title></title>
-</head>
-<body>
-  <form action="/" enctype="multipart/form-data" method="post">
-    <input type="text" name="title"><br>
-    <input type="file" name="upload" multiple="multiple"><br>
-    <input type="submit" value="Upload">
-  </form>
-</body>
-</html>`;
+'use strict';
+
+var fs = require('fs');
+var path = require('path');
+var util = require('util');
+var formidable = require('formidable');
+var homeView = '<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="utf-8">\n  <title></title>\n</head>\n<body>\n  <form action="/" enctype="multipart/form-data" method="post">\n    <input type="text" name="title"><br>\n    <input type="file" name="upload" multiple="multiple"><br>\n    <input type="submit" value="Upload">\n  </form>\n</body>\n</html>';
 
 function root(request, response) {
   response.send(homeView);
 }
 
 function upload(request, response) {
-  const form = new formidable.IncomingForm();
+  var form = new formidable.IncomingForm();
 
   form.uploadDir = './tmp/uploads';
   form.multiples = true;
   form.keepExtensions = true;
 
-  form.on('progress', (bytesReceived, bytesExpected) => {
+  form.on('progress', function (bytesReceived, bytesExpected) {
     console.log('-------------------progress bytesReceived', bytesReceived);
     console.log('-------------------progress bytesExpected', bytesExpected);
   });
 
   debugger;
 
-  form.parse(request, function(error, fields, files) {
+  form.parse(request, function (error, fields, files) {
     console.log('-------------------parse');
     // response.writeHead(200, { 'content-type': 'text/plain' });
     // response.write('received upload:\n\n');
@@ -67,6 +56,6 @@ function upload(request, response) {
 }
 
 module.exports = {
-  root,
-  upload
+  root: root,
+  upload: upload
 };

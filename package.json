@@ -4,11 +4,10 @@
   "description": "node upload assets server",
   "main": "dist/index.js",
   "scripts": {
-    "old-start": "npm run lint && npm run build && node-debug dist/index.js",
     "build": "./node_modules/.bin/babel ./src/ --out-dir ./dist/",
     "lint": "./node_modules/.bin/eslint src/index.js",
-    "start": "npm run lint && node --es_staging src/index.js",
-    "debug": "npm run lint && ./node_modules/.bin/node-debug --nodejs --es_staging src/index.js",
+    "start": "npm run lint && npm run build && node --es_staging dist/index.js",
+    "debug": "npm run lint && npm run build && ./node_modules/.bin/node-debug --nodejs --es_staging dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,22 +25,20 @@
     "url": "https://github.com/goncalvesjoao/up-your-ass-ets/issues"
   },
   "homepage": "https://github.com/goncalvesjoao/up-your-ass-ets#readme",
-  "olddevDependencies": {
+  "devDependencies": {
     "babel-cli": "6.4.5",
     "babel-preset-es2015": "6.3.13",
-    "babel-preset-stage-1": "6.3.13"
+    "babel-preset-stage-1": "6.3.13",
+    "eslint": "1.10.3",
+    "eslint-config-airbnb": "^5.0.0",
+    "eslint-plugin-react": "^3.16.1",
+    "node-inspector": "^0.12.5"
   },
   "babel": {
     "presets": [
       "es2015",
       "stage-1"
     ]
-  },
-  "devDependencies": {
-    "eslint": "1.10.3",
-    "eslint-config-airbnb": "^5.0.0",
-    "eslint-plugin-react": "^3.16.1",
-    "node-inspector": "^0.12.5"
   },
   "dependencies": {
     "express": "4.13.4",
