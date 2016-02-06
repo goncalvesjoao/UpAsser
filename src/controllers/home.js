@@ -1,66 +1,30 @@
-const fs = require('fs');
-const path = require('path');
-const util = require('util');
-const formidable = require('formidable');
-const homeView = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title></title>
-</head>
-<body>
-  <form action="/" enctype="multipart/form-data" method="post">
-    <input type="text" name="title"><br>
-    <input type="file" name="upload" multiple="multiple"><br>
-    <input type="submit" value="Upload">
-  </form>
-</body>
-</html>`;
+"use strict";
 
 function root(request, response) {
   response.send(homeView);
 }
 
 function upload(request, response) {
+  const formidable = require('formidable');
   const form = new formidable.IncomingForm();
+
+  console.log('-------------------upload started');
+  start = process.hrtime();
 
   form.uploadDir = './tmp/uploads';
   form.multiples = true;
   form.keepExtensions = true;
 
   form.on('progress', (bytesReceived, bytesExpected) => {
-    console.log('-------------------progress bytesReceived', bytesReceived);
-    console.log('-------------------progress bytesExpected', bytesExpected);
+    const percentage = Math.round((bytesReceived / bytesExpected) * 100);
+
+    console.log(`percentage ${ percentage }%`);
   });
 
   form.parse(request, function(error, fields, files) {
-    console.log('-------------------parse');
-    // response.writeHead(200, { 'content-type': 'text/plain' });
-    // response.write('received upload:\n\n');
-    // response.end(util.inspect({ fields: fields, files: files }));
-    response.send(homeView);
+    elapsedTime('-------------------upload ended')
 
-    // `file` is the name of the <input> field of type `file`
-    // const old_path = files.file.path;
-    // const file_size = files.file.size;
-    // const file_ext = files.file.name.split('.').pop();
-    // const index = old_path.lastIndexOf('/') + 1;
-    // const file_name = old_path.substr(index);
-    // const new_path = path.join(process.env.PWD, '/uploads/', file_name + '.' + file_ext);
-    //
-    // fs.readFile(old_path, function(error, data) {
-    //   fs.writeFile(new_path, data, function(error) {
-    //     fs.unlink(old_path, function(error) {
-    //       if (error) {
-    //         response.status(500);
-    //         response.json({'success': false});
-    //       } else {
-    //         response.status(200);
-    //         response.json({'success': true});
-    //       }
-    //     });
-    //   });
-    // });
+    response.status(200).send(homeView);
   });
 }
 
@@ -68,3 +32,32 @@ module.exports = {
   root,
   upload
 };
+
+// ******************************** PROTECTED **********************************
+
+let start = process.hrtime();
+
+const homeView = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+<body>
+  <form action="/upload" enctype="multipart/form-data" method="post">
+    <input type="text" name="title"><br>
+    <input type="file" name="upload" multiple="multiple"><br>
+    <input type="submit" value="Upload">
+  </form>
+
+  <a href="/"><h1>reload!</h1></a>
+</body>
+</html>`;
+
+function elapsedTime(note) {
+  const precision = 3;
+  const elapsed = process.hrtime(start)[1] / 1000000;
+
+  console.log(note + ' (' + process.hrtime(start)[0] + " s, " + elapsed.toFixed(precision) + " ms)"); // print message + time
+  start = process.hrtime();
+}

@@ -1,6 +1,6 @@
 {
   "name": "up-your-ass-ets",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "node upload assets server",
   "main": "src/index.js",
   "scripts": {
@@ -28,7 +28,8 @@
     "eslint": "1.10.3",
     "eslint-config-airbnb": "5.0.0",
     "eslint-plugin-react": "3.16.1",
-    "node-inspector": "0.12.5"
+    "node-inspector": "0.12.5",
+    "toxy": "0.3.9"
   },
   "dependencies": {
     "express": "4.13.4",

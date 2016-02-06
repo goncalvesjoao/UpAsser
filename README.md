@@ -1,3 +1,3 @@
 # Upload your Assets
 
-node upload assets server
+small POC to test assets uploads under bad network conditions
