@@ -4,12 +4,27 @@ function root(request, response) {
   response.send(homeView);
 }
 
+function uploadProgress(request, response) {
+  const tempId = request.query.temp_id;
+  const temporaryFile = temporaryFiles[tempId];
+
+  // console.log('-------------------uploadProgress', temporaryFile);
+
+  if (temporaryFile) {
+    response.status(200).json(temporaryFile);
+  } else {
+    response.status(404);
+  }
+}
+
 function upload(request, response) {
   const formidable = require('formidable');
+  const tempId = request.query.temp_id;
   const form = new formidable.IncomingForm();
 
   console.log('-------------------upload started');
   start = process.hrtime();
+  temporaryFiles[tempId] = { progress: 0 };
 
   form.uploadDir = './tmp/uploads';
   form.multiples = true;
@@ -19,47 +34,66 @@ function upload(request, response) {
     const percentage = Math.round((bytesReceived / bytesExpected) * 100);
 
     console.log(`percentage ${ percentage }%`);
+    temporaryFiles[tempId].progress = percentage;
   });
 
   form.parse(request, function(error, fields, files) {
-    elapsedTime('-------------------upload ended')
+    elapsedTime('-------------------upload ended');
+    delete temporaryFiles[tempId];
 
-    response.status(200).send(homeView);
+    console.log('temporaryFiles.length: ', Object.keys(temporaryFiles).length);
+
+    response.redirect('/');
   });
 }
 
 module.exports = {
   root,
-  upload
+  upload,
+  uploadProgress,
 };
 
 // ******************************** PROTECTED **********************************
 
+const temporaryFiles = {};
 let start = process.hrtime();
 
 const homeView = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title></title>
+  <title>Up your assets</title>
+  <script src="//code.jquery.com/jquery-2.2.0.min.js"></script>
 </head>
 <body>
-  <p>When selecting a 30KB file like <b>${ process.cwd() }/dummy_data/30K</b></p>
-  <p>we will see the server receiving chunks of data</p>
   <p>&nbsp</p>
-  <p>When selecting a 70KB file like <b>${ process.cwd() }/dummy_data/70K</b></p>
-  <p>the server doesn't get contacted (sometimes is does, but most of the times doesn't)</p>
-  <p>&nbsp</p>
-  <p>and selecting the 100KB file like <b>${ process.cwd() }/dummy_data/100K</b></p>
-  <p>the server doesn't get contacted (ever)</p>
-  <hr/>
-  <form action="/upload" enctype="multipart/form-data" method="post">
-    <input type="text" name="title"><br>
-    <input type="file" name="upload" multiple="multiple"><br>
+  <form id="ass_form" action="/upload" enctype="multipart/form-data" method="post" onsubmit="monitorUploadProgress(this)">
+    <input type="file" name="upload" multiple="multiple" onchange="onFileChange(this);">
     <input type="submit" value="Upload">
+    <span id="upload_progress">0</span>%
   </form>
 
   <a href="/"><h1>reload!</h1></a>
+
+  <script>
+    function onFileChange(element) {
+      var file = element.files[0];
+      var tempId = (+(new Date())) + file.size + file.name;
+
+      $('#ass_form').data('temp_id', tempId);
+      $('#ass_form').attr('action', '/upload?temp_id=' + tempId);
+    }
+
+    function monitorUploadProgress(element) {
+      var tempId = $('#ass_form').data('temp_id');
+
+      setInterval(function() {
+        $.getJSON('/upload_progress?temp_id=' + tempId, function(data, textStatus) {
+          $('#upload_progress').html(data.progress);
+        });
+      }, 250);
+    }
+  </script>
 </body>
 </html>`;
 

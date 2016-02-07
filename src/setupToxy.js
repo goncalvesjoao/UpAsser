@@ -16,7 +16,7 @@ function setup(expressPort, config) {
     // .poison(poisons.throttle({ chunk: 256, threshold: 2000 }))
     // .poison(poisons.slowOpen({ delay: 500 }))
 
-  proxy.get('/');
+  proxy.get('/*');
 
   proxy.listen(config.port);
 
