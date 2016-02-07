@@ -1,12 +1,12 @@
 {
   "name": "up-your-ass-ets",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "node upload assets server",
   "main": "src/index.js",
   "scripts": {
     "lint": "./node_modules/.bin/eslint src/index.js",
-    "start": "npm run lint && node --es_staging src/index.js",
-    "debug": "npm run lint && ./node_modules/.bin/node-debug --nodejs --es_staging src/index.js",
+    "start": "node --es_staging src/index.js",
+    "debug": "./node_modules/.bin/node-debug --nodejs --es_staging src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
