@@ -1,7 +1,7 @@
 "use strict";
 
 function progress(request, response) {
-  const tempId = request.query.temp_id;
+  const tempId = request.params.id;
   const temporaryFile = temporaryFiles[tempId];
 
   console.log('-------------------uploadProgress', temporaryFile);

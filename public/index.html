@@ -39,7 +39,7 @@
 
       setInterval(function() {
         makeRequest(
-          '/upload_progress?temp_id=' + tempId,
+          '/upload/' + tempId + '/progress',
           'GET',
           {},
           function(event) {
