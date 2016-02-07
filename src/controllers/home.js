@@ -8,7 +8,7 @@ function uploadProgress(request, response) {
   const tempId = request.query.temp_id;
   const temporaryFile = temporaryFiles[tempId];
 
-  // console.log('-------------------uploadProgress', temporaryFile);
+  console.log('-------------------uploadProgress', temporaryFile);
 
   if (temporaryFile) {
     response.status(200).json(temporaryFile);
@@ -66,14 +66,23 @@ const homeView = `<!DOCTYPE html>
   <script src="//code.jquery.com/jquery-2.2.0.min.js"></script>
 </head>
 <body>
-  <p>&nbsp</p>
   <form id="ass_form" action="/upload" enctype="multipart/form-data" method="post" onsubmit="monitorUploadProgress(this)">
-    <input type="file" name="upload" multiple="multiple" onchange="onFileChange(this);">
-    <input type="submit" value="Upload">
-    <span id="upload_progress">0</span>%
-  </form>
+    <ul>
+      <li>
+        <input type="file" name="upload" multiple="multiple" onchange="onFileChange(this);">
+      </li>
 
-  <a href="/"><h1>reload!</h1></a>
+      <li id="polling_progress">
+        <input type="submit" value="Normal upload">
+        <progress value="0" max="100"></progress>
+      </li>
+
+      <li id="xhr_progress">
+        <input type="button" onclick="asyncSubmit(this)" value="Ajax upload">
+        <progress value="0" max="100"></progress>
+      </li>
+    </ul>
+  </form>
 
   <script>
     function onFileChange(element) {
@@ -89,9 +98,28 @@ const homeView = `<!DOCTYPE html>
 
       setInterval(function() {
         $.getJSON('/upload_progress?temp_id=' + tempId, function(data, textStatus) {
-          $('#upload_progress').html(data.progress);
+          $('#polling_progress > progress').attr({ value: data.progress });
         });
       }, 250);
+    }
+
+    function asyncSubmit(element) {
+      var formData = new FormData($('#ass_form')[0]);
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/upload', true);
+      xhr.onload = function() { window.location.reload(); };
+      xhr.upload.onprogress = progressHandlingFunction;
+
+      xhr.send(formData);
+    }
+
+    function progressHandlingFunction(event) {
+      if (event.lengthComputable) {
+        console.log(event.loaded, event.total);
+        $('#xhr_progress > progress')
+          .attr({ value: event.loaded, max: event.total });
+      }
     }
   </script>
 </body>
