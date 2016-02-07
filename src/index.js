@@ -14,3 +14,7 @@ const toxyConfig = {
 routes(app);
 
 app.listen(port, setupToxy.bind(null, port, toxyConfig));
+
+// app.listen(port, () => {
+//   console.log(`Up and kicking ass on port ${ port }`);
+// });

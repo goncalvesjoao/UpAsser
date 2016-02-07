@@ -1,6 +1,8 @@
 "use strict";
 
 function root(request, response) {
+  console.log('-------------------home');
+
   response.send(homeView);
 }
 
@@ -63,7 +65,6 @@ const homeView = `<!DOCTYPE html>
 <head>
   <meta charset="utf-8">
   <title>Up your assets</title>
-  <script src="//code.jquery.com/jquery-2.2.0.min.js"></script>
 </head>
 <body>
   <form id="ass_form" action="/upload" enctype="multipart/form-data" method="post" onsubmit="monitorUploadProgress(this)">
@@ -72,14 +73,14 @@ const homeView = `<!DOCTYPE html>
         <input type="file" name="upload" multiple="multiple" onchange="onFileChange(this);">
       </li>
 
-      <li id="polling_progress">
+      <li>
         <input type="submit" value="Normal upload">
-        <progress value="0" max="100"></progress>
+        <progress id="polling_progress" value="0" max="100"></progress>
       </li>
 
-      <li id="xhr_progress">
+      <li>
         <input type="button" onclick="asyncSubmit(this)" value="Ajax upload">
-        <progress value="0" max="100"></progress>
+        <progress id="xhr_progress" value="0" max="100"></progress>
       </li>
     </ul>
   </form>
@@ -89,37 +90,59 @@ const homeView = `<!DOCTYPE html>
       var file = element.files[0];
       var tempId = (+(new Date())) + file.size + file.name;
 
-      $('#ass_form').data('temp_id', tempId);
-      $('#ass_form').attr('action', '/upload?temp_id=' + tempId);
+      var formElement = document.querySelector('#ass_form');
+      formElement.attributes.data = { tempId: tempId };
+      formElement.action = '/upload?temp_id=' + tempId;
     }
 
     function monitorUploadProgress(element) {
-      var tempId = $('#ass_form').data('temp_id');
+      var formElement = document.querySelector('#ass_form');
+      var tempId = formElement.attributes.data.tempId;
 
       setInterval(function() {
-        $.getJSON('/upload_progress?temp_id=' + tempId, function(data, textStatus) {
-          $('#polling_progress > progress').attr({ value: data.progress });
-        });
+        makeRequest(
+          '/upload_progress?temp_id=' + tempId,
+          'GET',
+          {},
+          function(event) {
+            var data = JSON.parse(this.response);
+            document.querySelector('#polling_progress').value = data.progress;
+          }
+        );
       }, 250);
     }
 
     function asyncSubmit(element) {
-      var formData = new FormData($('#ass_form')[0]);
+      var formElement = document.querySelector('#ass_form');
+      var formData = new FormData(formElement);
 
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', '/upload', true);
-      xhr.onload = function() { window.location.reload(); };
-      xhr.upload.onprogress = progressHandlingFunction;
-
-      xhr.send(formData);
+      makeRequest(
+        '/upload',
+        'POST',
+        formData,
+        function() { window.location.reload(); },
+        progressHandlingFunction
+      );
     }
 
     function progressHandlingFunction(event) {
       if (event.lengthComputable) {
         console.log(event.loaded, event.total);
-        $('#xhr_progress > progress')
-          .attr({ value: event.loaded, max: event.total });
+
+        var progressElement = document.querySelector('#xhr_progress');
+        progressElement.value = event.loaded;
+        progressElement.max = event.total;
       }
+    }
+
+    function makeRequest(url, httpVerb, data, onLoad, onProgress) {
+      var xhr = new XMLHttpRequest();
+
+      xhr.open(httpVerb, url, true);
+      xhr.onload = onLoad;
+      xhr.upload.onprogress = onProgress;
+
+      xhr.send(data);
     }
   </script>
 </body>
