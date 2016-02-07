@@ -44,6 +44,15 @@ const homeView = `<!DOCTYPE html>
   <title></title>
 </head>
 <body>
+  <p>When selecting a 30KB file like <b>${ process.cwd() }/dummy_data/30K</b></p>
+  <p>we will see the server receiving chunks of data</p>
+  <p>&nbsp</p>
+  <p>When selecting a 70KB file like <b>${ process.cwd() }/dummy_data/70K</b></p>
+  <p>the server doesn't get contacted (sometimes is does, but most of the times doesn't)</p>
+  <p>&nbsp</p>
+  <p>and selecting the 100KB file like <b>${ process.cwd() }/dummy_data/100K</b></p>
+  <p>the server doesn't get contacted (ever)</p>
+  <hr/>
   <form action="/upload" enctype="multipart/form-data" method="post">
     <input type="text" name="title"><br>
     <input type="file" name="upload" multiple="multiple"><br>
