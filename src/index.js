@@ -14,6 +14,8 @@ const toxyConfig = {
 
 routes(app);
 
+app.use(express.static('./tmp'));
+
 if (toxyOn) {
   app.listen(port, setupToxy.bind(null, port, toxyConfig));
 } else {

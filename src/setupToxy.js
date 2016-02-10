@@ -23,7 +23,7 @@ function setup(expressPort, config) {
     .poison(poisons.throttle({ chunk: 8, threshold: 500 }))
     .withRule(rules.probability(95))
 
-  proxy.get('/');
+  proxy.get('/*');
 
   proxy.listen(config.port);
 
