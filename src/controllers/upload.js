@@ -4,12 +4,13 @@ function progress(request, response) {
   const tempId = request.params.id;
   const temporaryFile = temporaryFiles[tempId];
 
-  console.log('-------------------uploadProgress', temporaryFile);
+  console.log('-------------------uploadProgress ' + tempId + ': ', temporaryFile);
 
   if (temporaryFile) {
     response.status(200).json(temporaryFile);
   } else {
-    response.status(404);
+    response.status(200).json({ progress: null });
+    // response.status(404);
   }
 }
 
@@ -27,9 +28,10 @@ function upload(request, response) {
   form.keepExtensions = true;
 
   form.on('progress', (bytesReceived, bytesExpected) => {
-    const percentage = Math.round((bytesReceived / bytesExpected) * 100);
+    // const percentage = Math.round((bytesReceived / bytesExpected) * 100);
+    const percentage = (bytesReceived / bytesExpected);
 
-    console.log(`percentage ${ percentage }%`);
+    console.log(`percentage ${ Math.round(percentage * 100) }%`);
     temporaryFiles[tempId].progress = percentage;
   });
 
