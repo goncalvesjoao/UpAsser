@@ -44,7 +44,7 @@
           {},
           function(event) {
             var data = JSON.parse(this.response);
-            document.querySelector('#polling_progress').value = data.progress;
+            document.querySelector('#polling_progress').value = data.progress * 100;
           }
         );
       }, 250);
