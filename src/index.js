@@ -6,7 +6,7 @@ const app = express();
 const port = 3030;
 
 const toxyConfig = {
-  port: 3000,
+  port: process.env.PORT || 3000,
 };
 
 // ******************************* BOOTSTRAP ***********************************
