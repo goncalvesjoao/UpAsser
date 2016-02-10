@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "lint": "./node_modules/.bin/eslint src/index.js",
-    "start": "node --es_staging src/index.js",
+    "old-start": "node --es_staging src/index.js",
+    "start": "node src/index.js",
     "debug": "./node_modules/.bin/node-debug --nodejs --es_staging src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -28,10 +29,10 @@
     "eslint": "1.10.3",
     "eslint-config-airbnb": "5.0.0",
     "eslint-plugin-react": "3.16.1",
-    "node-inspector": "0.12.5",
-    "toxy": "0.3.10"
+    "node-inspector": "0.12.5"
   },
   "dependencies": {
+    "toxy": "0.3.10",
     "express": "4.13.4",
     "formidable": "1.0.17"
   }
