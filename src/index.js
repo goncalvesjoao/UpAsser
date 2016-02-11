@@ -6,6 +6,8 @@ const app = express();
 const port = 3030;
 const toxyOn = true;
 
+if (process.env.PORT) { toxyOn = false; }
+
 const toxyConfig = {
   port: process.env.PORT || 3000,
 };
