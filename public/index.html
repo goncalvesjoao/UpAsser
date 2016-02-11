@@ -5,7 +5,7 @@
   <title>Up your assets</title>
 </head>
 <body>
-  <form id="ass_form" action="/upload" enctype="multipart/form-data" method="post" onsubmit="monitorUploadProgress(this)">
+  <form id="ass_form" action="/uploads" enctype="multipart/form-data" method="post" onsubmit="monitorUploadProgress(this)">
     <ul>
       <li>
         <input type="file" name="upload" multiple="multiple" onchange="onFileChange(this);">
@@ -30,7 +30,7 @@
 
       var formElement = document.querySelector('#ass_form');
       formElement.attributes.data = { tempId: tempId };
-      formElement.action = '/upload?temp_id=' + tempId;
+      formElement.action = '/uploads?temp_id=' + tempId;
     }
 
     function monitorUploadProgress(element) {
@@ -39,7 +39,7 @@
 
       setInterval(function() {
         makeRequest(
-          '/upload/' + tempId + '/progress',
+          '/uploads/' + tempId + '/progress',
           'GET',
           {},
           function(event) {
@@ -55,7 +55,7 @@
       var formData = new FormData(formElement);
 
       makeRequest(
-        '/upload',
+        '/uploads',
         'POST',
         formData,
         function() { window.location.reload(); },

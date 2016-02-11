@@ -1,6 +1,6 @@
 {
   "name": "up-your-ass-ets",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "node upload assets server",
   "main": "src/index.js",
   "scripts": {
@@ -35,8 +35,9 @@
     "node-inspector": "0.12.5"
   },
   "dependencies": {
-    "toxy": "0.3.10",
     "express": "4.13.4",
-    "formidable": "1.0.17"
+    "formidable": "1.0.17",
+    "fs-extra": "^0.26.5",
+    "toxy": "0.3.10"
   }
 }

@@ -7,7 +7,7 @@ function setup(expressPort, config) {
   proxy.forward('http://localhost:' + expressPort);
 
   proxy
-    .post('/upload')
+    .post('/uploads')
     .poison(poisons.bandwidth({ bps: 102400, threshold: 500 }))
     .poison(poisons.throttle({ chunk: 102400, threshold: 500 }))
     .poison(poisons.slowRead({ chunk: 102400, threshold: 500 }))
@@ -17,7 +17,7 @@ function setup(expressPort, config) {
     // .poison(poisons.slowOpen({ delay: 500 }))
 
   proxy
-    .get('/upload/:id/progress')
+    .get('/uploads/:id/progress')
     .poison(poisons.slowRead({ chunk: 8, threshold: 500 }))
     .poison(poisons.bandwidth({ bps: 8, threshold: 500 }))
     .poison(poisons.throttle({ chunk: 8, threshold: 500 }))
