@@ -4,7 +4,7 @@ const setupToxy = require('./setupToxy');
 
 const app = express();
 const port = 3030;
-const toxyOn = true;
+const toxyOn = false;
 
 if (process.env.PORT) { toxyOn = false; }
 
