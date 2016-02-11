@@ -8,7 +8,7 @@
   <form id="ass_form" action="/uploads" enctype="multipart/form-data" method="post" onsubmit="monitorUploadProgress(this)">
     <ul>
       <li>
-        <input type="file" name="upload" multiple="multiple" onchange="onFileChange(this);">
+        <input type="file" name="image" multiple="multiple" onchange="onFileChange(this);">
       </li>
 
       <li>
@@ -26,20 +26,20 @@
   <script>
     function onFileChange(element) {
       var file = element.files[0];
-      var tempId = (+(new Date())) + file.size + file.name;
+      var id = (+(new Date())) + file.size + file.name;
 
       var formElement = document.querySelector('#ass_form');
-      formElement.attributes.data = { tempId: tempId };
-      formElement.action = '/uploads?temp_id=' + tempId;
+      formElement.attributes.data = { id: id };
+      formElement.action = '/uploads?id=' + id;
     }
 
     function monitorUploadProgress(element) {
       var formElement = document.querySelector('#ass_form');
-      var tempId = formElement.attributes.data.tempId;
+      var id = formElement.attributes.data.id;
 
       setInterval(function() {
         makeRequest(
-          '/uploads/' + tempId + '/progress',
+          '/uploads/' + id + '/status',
           'GET',
           {},
           function(event) {
