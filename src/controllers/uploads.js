@@ -3,39 +3,50 @@
 const fs = require('fs-extra');
 const uploadDir = './tmp/uploads/';
 
+function statusResponse(response, data) {
+  console.log('-------------------uploadProgress', data);
+  return response.status(200).json(data);
+}
+
 function status(request, response) {
   const id = request.params.id;
   const temporaryFile = temporaryFiles[id];
   const responseData = { id: id, progress: null, status: null };
-  let fileExists = false;
 
   if (temporaryFile) {
     responseData.progress = temporaryFile.progress;
     responseData.status = 'temporary';
 
-    console.log('-------------------uploadProgress', responseData);
-    return response.status(200).json(responseData);
+    return statusResponse(response, responseData);
   }
 
-  fs.access(process.cwd() + '/' + uploadDir + id, fs.F_OK, function(error) {
-    fileExists = !error;
-
-    if (fileExists) {
-      responseData.progress = 100;
-      responseData.status = 'persisted';
-    } else {
-      responseData.status = 'not_found';
+  fs.access(process.cwd() + '/' + uploadDir + id + '_failed', fs.F_OK, function(error) {
+    if (!error) {
+      responseData.status = 'failed';
+      return statusResponse(response, responseData);
     }
 
-    console.log('-------------------uploadProgress', responseData);
-    response.status(200).json(responseData);
+    fs.access(process.cwd() + '/' + uploadDir + id, fs.F_OK, function(error) {
+      const fileExists = !error;
+
+      if (fileExists) {
+        responseData.progress = 100;
+        responseData.status = 'persisted';
+      } else {
+        responseData.status = 'not_found';
+      }
+
+      statusResponse(response, responseData);
+    });
   });
+
 }
 
 function create(request, response) {
   const formidable = require('formidable');
   const id = request.query.id;
   const form = new formidable.IncomingForm();
+  const newFileName = uploadDir + id;
 
   console.log('-------------------upload started');
   start = process.hrtime();
@@ -44,6 +55,8 @@ function create(request, response) {
   // form.uploadDir = uploadDir;
   form.multiples = true;
   form.keepExtensions = true;
+
+  fs.ensureFile(newFileName + '_failed', error => error);
 
   form.on('progress', (bytesReceived, bytesExpected) => {
     // const percentage = Math.round((bytesReceived / bytesExpected) * 100);
@@ -54,16 +67,19 @@ function create(request, response) {
   });
 
   form.parse(request, function(error, fields, files) {
-    const fileName = files.image.path;
-    const extension = fileName.substr(fileName.lastIndexOf('.'));
-    const options = { clobber: true };
-    const newFileName = uploadDir + id;
+    if (!error) {
+      const fileName = files.image.path;
+      const extension = fileName.substr(fileName.lastIndexOf('.'));
+      const options = { clobber: true };
 
-    fs.move(fileName, newFileName, options, (error) => {
-      if (error) {
-        console.error(error);
-      }
-    });
+      fs.remove(newFileName + '_failed', error => error);
+
+      fs.move(fileName, newFileName, options, (error) => {
+        if (error) {
+          console.error(error);
+        }
+      });
+    }
 
     elapsedTime('-------------------upload ended');
     delete temporaryFiles[id];
