@@ -1,3 +1,5 @@
+"use strict";
+
 const routes = require('./routes');
 const express = require('express');
 const setupToxy = require('./setupToxy');
