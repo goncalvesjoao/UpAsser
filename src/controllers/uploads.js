@@ -66,7 +66,13 @@ function create(request, response) {
     temporaryFiles[id].progress = percentage;
   });
 
+  form.end(request, function() {
+    delete temporaryFiles[id];
+  });
+
   form.parse(request, function(error, fields, files) {
+    delete temporaryFiles[id];
+
     if (!error) {
       const fileName = files.image.path;
       const extension = fileName.substr(fileName.lastIndexOf('.'));
@@ -82,7 +88,6 @@ function create(request, response) {
     }
 
     elapsedTime('-------------------upload ended');
-    delete temporaryFiles[id];
 
     console.log('temporaryFiles.length: ', Object.keys(temporaryFiles).length);
 
