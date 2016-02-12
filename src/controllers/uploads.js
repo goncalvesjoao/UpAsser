@@ -68,7 +68,7 @@ function create(request, response) {
 
   form.parse(request, function(error, fields, files) {
     if (!error) {
-      const fileName = files.image.path;
+      const fileName = files.file.path;
       const extension = fileName.substr(fileName.lastIndexOf('.'));
       const options = { clobber: true };
 
